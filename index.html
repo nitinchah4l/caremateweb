@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareMate | Smart Healthcare Management</title>
+    <meta name="description" content="Manage your health, medicines, and appointments with CareMate AI.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Tesseract OCR -->
+    <script src='https://unpkg.com/tesseract.js@v4.0.1/dist/tesseract.min.js'></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Auth Screen (Default) -->
+        <div id="auth-screen" class="view active">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <div class="logo">
+                            <i data-lucide="heart-pulse" class="brand-icon"></i>
+                            <h1>CareMate</h1>
+                        </div>
+                        <p id="auth-subtitle">Welcome back to your health companion</p>
+                    </div>
+                    
+                    <form id="auth-form">
+                        <div class="input-group" id="name-group" style="display: none;">
+                            <label for="reg-name">Full Name</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="user"></i>
+                                <input type="text" id="reg-name" placeholder="John Doe">
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="auth-email">Email Address</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="mail"></i>
+                                <input type="email" id="auth-email" placeholder="name@example.com" required>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="auth-password">Password</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="lock"></i>
+                                <input type="password" id="auth-password" placeholder="••••••••" required>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" id="auth-submit-btn" class="btn primary-btn">Login</button>
+                    </form>
+                    
+                    <div class="auth-footer">
+                        <p id="auth-toggle-text">Don't have an account? <a href="#" id="auth-toggle">Sign Up</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App Screen (Hidden initially) -->
+        <div id="main-screen" class="view">
+            <nav class="side-nav">
+                <div class="nav-header">
+                    <i data-lucide="heart-pulse" class="brand-icon"></i>
+                    <span class="brand-name">CareMate</span>
+                </div>
+                
+                <ul class="nav-links">
+                    <li class="active" data-route="dashboard">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li data-route="medicines">
+                        <i data-lucide="pill"></i>
+                        <span>Medicines</span>
+                    </li>
+                    <li data-route="health">
+                        <i data-lucide="activity"></i>
+                        <span>Health Track</span>
+                    </li>
+                    <li data-route="appointments">
+                        <i data-lucide="calendar"></i>
+                        <span>Appointments</span>
+                    </li>
+                    <li data-route="scanner">
+                        <i data-lucide="scan-line"></i>
+                        <span>Smart Scanner</span>
+                    </li>
+                    <li data-route="ai">
+                        <i data-lucide="bot"></i>
+                        <span>AI Assistant</span>
+                    </li>
+                </ul>
+                
+                <div class="nav-footer">
+                    <div class="user-profile" data-route="profile">
+                        <img id="user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nitin" alt="Profile">
+                        <div class="user-info">
+                            <span id="user-name-display">Nitin</span>
+                            <span class="user-status">Pro Member</span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="content-area">
+                <header class="top-bar">
+                    <div class="page-title">
+                        <h2 id="current-view-title">Dashboard</h2>
+                    </div>
+                    <div class="top-actions">
+                        <button class="emergency-btn-small" id="global-emergency-btn">
+                            <i data-lucide="alert-triangle"></i>
+                            SOS
+                        </button>
+                        <div class="notifications">
+                            <i data-lucide="bell"></i>
+                            <span class="badge"></span>
+                        </div>
+                    </div>
+                </header>
+
+                <div id="view-container">
+                    <!-- Dynamic views will be injected here -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Emergency Overlay -->
+        <div id="emergency-overlay" class="overlay">
+            <div class="emergency-modal">
+                <i data-lucide="alert-circle" class="emergency-icon"></i>
+                <h2>EMERGENCY ALERT</h2>
+                <p>Are you sure you want to trigger an emergency alert? Your emergency contacts will be notified immediately.</p>
+                <div class="emergency-actions">
+                    <button id="confirm-emergency" class="btn danger-btn">YES, SEND ALERT</button>
+                    <button id="cancel-emergency" class="btn secondary-btn">CANCEL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container"></div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
