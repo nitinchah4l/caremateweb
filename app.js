@@ -1,3 +1,5 @@
+import { auth, db } from "./firebase-config.js";
+
 /**
  * CareMate Main Application Logic
  */

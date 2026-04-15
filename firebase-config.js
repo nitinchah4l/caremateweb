@@ -1,22 +1,21 @@
-// Your web app's Firebase configuration
-// REPLACE WITH YOUR ACTUAL CONFIG FROM FIREBASE CONSOLE
+// firebase-config.js
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 
 // Initialize Firebase
-if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
-    firebase.initializeApp(firebaseConfig);
-    console.log("Firebase Initialized");
-} else {
-    console.warn("Firebase config not found. Running in Demo Mode.");
-}
+const app = initializeApp(firebaseConfig);
 
-const auth = firebase.auth ? firebase.auth() : null;
-const db = firebase.firestore ? firebase.firestore() : null;
-const googleProvider = firebase.auth ? new firebase.auth.GoogleAuthProvider() : null;
+// Export services
+export const auth = getAuth(app);
+export const db = getFirestore(app);
